@@ -3,12 +3,12 @@ from selenium import webdriver
 from datetime import datetime, timedelta
 from pandas import DataFrame, to_datetime
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 target_url = 'https://southeastasiainfra.com/category/urban-infrastructure/'
-driver = webdriver.Chrome()
-
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 
 print(f'Scraping from {target_url}...')
 driver.get(target_url)
@@ -20,7 +20,8 @@ li_tags = driver.find_elements(By.XPATH, '//ul[@class="widget_list"]/li')
 for li in li_tags:
     link = li.find_element(By.XPATH, './div/a').get_attribute('href')
     title = li.find_element(By.XPATH, './div/a').text
-    time = li.find_element(By.XPATH, './div/div/span[@class="updated"]').text
+    time = li.find_element(
+        By.XPATH, './div/div/span[@class="updated"]').text
     country = ''.join([i.text for i in li.find_elements(
         By.XPATH, './div/div//a')]).replace('Key Developments', '')
     articles.append({'title': title, 'country': country,
@@ -31,7 +32,8 @@ results = DataFrame(articles)
 results.time = to_datetime(results.time)
 one_week_ago = (datetime.today() - timedelta(days=7)
                 ).replace(hour=0, minute=0, second=0)
-results = results[results.time >= one_week_ago]  # Articles in the past 7 days
+# Articles in the past 7 days
+results = results[results.time >= one_week_ago]
 results.time = results.time.apply(lambda x: x.strftime("%Y-%m-%d"))
 print('Parsing process completed!')
 
