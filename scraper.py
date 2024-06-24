@@ -1,15 +1,11 @@
 from selenium import webdriver
+from pandas import DataFrame, set_option, to_datetime
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from pandas import DataFrame
+from datetime import datetime, timedelta
 
-# 配置Chrome选项
-chrome_options = Options()
-chrome_options.add_argument("--headless")  # 运行无头模式
 
 target_url = 'https://southeastasiainfra.com/category/urban-infrastructure/'
-driver = webdriver.Chrome(options=chrome_options)
+driver = webdriver.Chrome()
 
 
 print(f'Scraping from {target_url}...')
@@ -27,11 +23,17 @@ for li in li_tags:
     articles.append({'title': title, 'country': country,
                     'time': time, 'link': link})
     # print(f'title: {title}\nlink: {link}\ntime: {time}\ncountry: {country}\n\n')
+results = DataFrame(articles)
+results.time = to_datetime(results.time)
+one_week_ago = (datetime.today() - timedelta(days=7)
+                ).replace(hour=0, minute=0, second=0)
+results = results[results.time >= one_week_ago]  # Articles in the past 7 days
 print('Parsing process completed!')
 
+# saving_path = input('Please enter the ')
 
 print('Start exporting the results...')
-DataFrame(articles).to_excel()
+
 print(f'Data exporting process completed!\nPlease find the results from this path:')
 
 input('Press enter to quit...')
