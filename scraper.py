@@ -1,14 +1,9 @@
-from selenium import webdriver
-from pandas import DataFrame, set_option, to_datetime
-from selenium.webdriver.common.by import By
-from datetime import datetime, timedelta
 from os.path import join
-
-set_option('display.max_rows', None)
-set_option('display.max_columns', None)
-set_option('display.expand_frame_repr', False)
-set_option('display.float_format', lambda x: '%.2f' % x)  # 打印完整数据
-set_option('display.max_colwidth', None)
+from selenium import webdriver
+from datetime import datetime, timedelta
+from pandas import DataFrame, to_datetime
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
 
 target_url = 'https://southeastasiainfra.com/category/urban-infrastructure/'
@@ -31,6 +26,7 @@ for li in li_tags:
     articles.append({'title': title, 'country': country,
                     'time': time, 'link': link})
     # print(f'title: {title}\nlink: {link}\ntime: {time}\ncountry: {country}\n\n')
+driver.quit()
 results = DataFrame(articles)
 results.time = to_datetime(results.time)
 one_week_ago = (datetime.today() - timedelta(days=7)
@@ -39,11 +35,14 @@ results = results[results.time >= one_week_ago]  # Articles in the past 7 days
 results.time = results.time.apply(lambda x: x.strftime("%Y-%m-%d"))
 print('Parsing process completed!')
 
-saving_path = input('Please enter the saving path and press "Enter": ')
-print('Start exporting the results...')
-results.to_excel(join(saving_path, 'results.xlsx'), index=False)
-print(f'Data exporting process completed!\n'
-      f'Please find the results from this path: {saving_path}')
+if not results.empty:
+    saving_path = join(
+        input('Please enter the saving path and press "Enter": '), 'results.xlsx')
+    print('Start exporting the results...')
+    results.to_excel(saving_path, index=False)
+    print(f'\nData exporting process completed!\nTotal number of articles found: {results.title.count()}\n'
+          f'Please find the results from this path: {saving_path}')
+else:
+    print('No articles are found for the past 7 days!')
 
-input('Press enter to quit...')
-driver.quit()
+input('\nPress enter to quit...')
