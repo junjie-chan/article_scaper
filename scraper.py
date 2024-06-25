@@ -47,7 +47,7 @@ print('Parsing process completed!')
 
 if not results.empty:
     saving_path = join(
-        input('Please enter the saving path and press "Enter": '), 'results.xlsx')
+        input('Please enter the saving path and press "Enter": '), 'articles.xlsx')
     print('Start exporting the results...')
     results.to_excel(saving_path, index=False)
     print(f'\nData exporting process completed!\nTotal number of articles found: {results.title.count()}\n'
