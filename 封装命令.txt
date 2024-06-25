@@ -1,0 +1,24 @@
+pyinstaller scraper.py -F --hidden-import=selenium -n=article_scraper.exe
+
+pyinstaller --name article_scraper -F scraper.py
+
+
+pyinstaller -F --paths=D:\\用户文档转移\\Desktop\\article_scraping\\.conda\\Lib\\site-packages\\selenium scraper.py
+
+问题：没有自动将selenium库打包进去。
+
+使用的是Python12而不是Visual Studio Code里的编译器，而且这里面没有pip
+cmd这个Python所在的scripts文件夹：python -m pip --version，发现没有pip。安装pip：
+1. https://bootstrap.pypa.io/get-pip.py
+2. python get-pip.py
+安装selenium库：pip install selenium pandas from webdriver_manager openpyxl
+
+pyinstaller -F --hidden-import=selenium scraper.py
+
+最终封装命令：pyinstaller -F -i icon.ico --hidden-import=selenium  scraper.py
+
+pyinstaller -F -i D:\用户文档转移\Desktop\article_scraping\icon.ico --hidden-import=selenium  D:\用户文档转移\Desktop\article_scraping\scraper.py
+
+问题：在文件管理器上看的时候图标并没有更改。
+原因：封装用的ico尺寸太小，所以电脑选用默认的Python封装图标。
+解决方法：在PPT构建图标时把尺寸弄大，如100cm，然后在保存
