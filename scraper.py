@@ -1,3 +1,12 @@
+"""
+This is a program for scraping articles from the Southeast Asia Infrastructure.
+The articles from the last 7 days will be retrieved and saved in an Excel file.
+
+Author: Junjie Chen
+Contact: junjie.chan@outlook.com
+Date: 2024-06-25
+"""
+
 from os.path import join
 from selenium import webdriver
 from datetime import datetime, timedelta
@@ -5,7 +14,6 @@ from pandas import DataFrame, to_datetime
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-
 
 target_url = 'https://southeastasiainfra.com/category/urban-infrastructure/'
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
@@ -25,7 +33,7 @@ for li in li_tags:
     country = ''.join([i.text for i in li.find_elements(
         By.XPATH, './div/div//a')]).replace('Key Developments', '')
     articles.append({'title': title, 'country': country,
-                    'time': time, 'link': link})
+                     'time': time, 'link': link})
     # print(f'title: {title}\nlink: {link}\ntime: {time}\ncountry: {country}\n\n')
 driver.quit()
 results = DataFrame(articles)
