@@ -38,7 +38,7 @@ for li in li_tags:
 driver.quit()
 results = DataFrame(articles)
 results.time = to_datetime(results.time)
-one_week_ago = (datetime.today() - timedelta(days=7)
+one_week_ago = (datetime.today() - timedelta(days=8)
                 ).replace(hour=0, minute=0, second=0)
 # Articles in the past 7 days
 results = results[results.time >= one_week_ago]
